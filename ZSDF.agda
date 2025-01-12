@@ -468,16 +468,29 @@ postulate ‖-‖-elim : {A : Type} {B : ‖ A ‖ → Type} → ((a : ‖ A ‖
 ∃ : (A : Type) (B : A → Type) → Type
 ∃ A B = ‖ Σ A B ‖
 
--- this proof was adapted from 1lab
-
-postulate funext : {A : Type} {B : A → Type} {g h : (a : A) → B a} → ((a : A) → (g a) ≡ (h a)) → g ≡ h
-
 ‖-‖-elim-2 : {A B : Type} {C : ‖ A ‖ → ‖ B ‖ → Type} 
     → ({a : ‖ A ‖} → {b : ‖ B ‖} → isProp (C a b)) 
     → ((a : A) → (b : B) → C (‖-‖-intro a) (‖-‖-intro b)) 
     → (a : ‖ A ‖) → (b : ‖ B ‖) → C a b
-‖-‖-elim-2 {A} {B} {C} hC g = ‖-‖-elim (λ _ → λ _ → λ _ → funext (λ _ → hC _ _))
-    λ a → ‖-‖-elim (λ _ → hC) λ b → g a b
+‖-‖-elim-2 {A} {B} {C} hC g a' b' = 
+    transp (λ w → C a' w) (‖-‖-isProp (pr2' (helper4 a' b')) b') (
+        transp (λ w → C w (pr2' (helper4 a' b'))) (‖-‖-isProp (pr1' (helper4 a' b')) a') (helper5 (helper4 a' b'))) where
+    helper1 : B → ‖ A ‖ → ‖ Σ A (λ _ → B) ‖
+    helper1 b = ‖-‖-elim (λ _ → ‖-‖-isProp) (λ a → ‖-‖-intro ((a , b)))
+    helper2 : ‖ Σ (‖ A ‖) (λ _ → B) ‖ → ‖ Σ A (λ _ → B) ‖
+    helper2 = ‖-‖-elim (λ _ → ‖-‖-isProp) (λ y → helper1 (pr2 y) (pr1 y))
+    helper3 : ‖ A ‖ → ‖ B ‖ → ‖ Σ (‖ A ‖) (λ _ → B) ‖
+    helper3 a' = ‖-‖-elim (λ _ → ‖-‖-isProp) (λ b → ‖-‖-intro ((a' , b)))
+    helper4 : ‖ A ‖ → ‖ B ‖ → ‖ Σ A (λ _ → B) ‖
+    helper4 a' b' = helper2 (helper3 a' b')
+    pr1' : ‖ Σ A (λ _ → B) ‖ → ‖ A ‖
+    pr1' = ‖-‖-elim (λ _ → ‖-‖-isProp) (λ y → ‖-‖-intro (pr1 y))
+    pr2' : ‖ Σ A (λ _ → B) ‖ → ‖ B ‖
+    pr2' = ‖-‖-elim (λ _ → ‖-‖-isProp) (λ y → ‖-‖-intro (pr2 y))
+    helper5 : (y : ‖ Σ A (λ _ → B) ‖) → C (pr1' y) (pr2' y) 
+    helper5 = ‖-‖-elim (λ y → hC {pr1' y} {pr2' y}) λ y → 
+        transp (λ w → C w (pr2' (‖-‖-intro y))) (‖-‖-isProp (‖-‖-intro (pr1 y)) (pr1' (‖-‖-intro y))) 
+            (transp (λ w → C (‖-‖-intro (pr1 y)) w) (‖-‖-isProp (‖-‖-intro (pr2 y)) (pr2' (‖-‖-intro y))) (g (pr1 y) (pr2 y)))
 
 -- we also need that equality on ℕ is a proposition
 
@@ -515,4 +528,4 @@ theorem g hg h hh hgh hgh' n = helper hg hh where
         → (∃ ZSDF (λ k' → (n : ℕ) → (h n) ≡ (eval k' n)))
         → (g n) ≡ (h n)
     helper = ‖-‖-elim-2 (ℕ-isSet _ _) λ hg → λ hh → 
-        pre-theorem g (pr1 hg) (pr2 hg) h (pr1 hh) (pr2 hh) hgh hgh' n
+        pre-theorem g (pr1 hg) (pr2 hg) h (pr1 hh) (pr2 hh) hgh hgh' n 
