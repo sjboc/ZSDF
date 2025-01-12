@@ -437,7 +437,7 @@ pre-theorem g k hg h k' hh hgh hgh' n = (Function-to-ZSDF-eq g k hg n)
     · (ap (λ y → eval y n) (Function-to-ZSDF-const-eval g k hg h k' hh hgh hgh') 
     · (sym (Function-to-ZSDF-eq h k' hh n)))  
 
--- proving the final leg of the theorem using proofs adapted from 1Lab
+-- proving the final leg of the theorem, with 
 
 isProp : (A : Type) → Type
 isProp A = (a b : A) → a ≡ b
@@ -466,6 +466,11 @@ postulate ‖-‖-intro : {A : Type} → A → ‖ A ‖
 postulate ‖-‖-isProp : {A : Type} → isProp ‖ A ‖
 postulate ‖-‖-elim : {A : Type} {B : ‖ A ‖ → Type} → ((a : ‖ A ‖) → isProp (B a)) → ((a : A) → B (‖-‖-intro a)) → (a : ‖ A ‖) → B a
 
+∃ : (A : Type) (B : A → Type) → Type
+∃ A B = ‖ Σ A B ‖
+
+-- this proof was adapted from 1lab
+
 postulate funext : {A : Type} {B : A → Type} {g h : (a : A) → B a} → ((a : A) → (g a) ≡ (h a)) → g ≡ h
 
 ‖-‖-elim-2 : {A B : Type} {C : ‖ A ‖ → ‖ B ‖ → Type} 
@@ -474,9 +479,6 @@ postulate funext : {A : Type} {B : A → Type} {g h : (a : A) → B a} → ((a :
     → (a : ‖ A ‖) → (b : ‖ B ‖) → C a b
 ‖-‖-elim-2 {A} {B} {C} hC g = ‖-‖-elim (λ _ → λ _ → λ _ → funext (λ _ → hC _ _))
     λ a → ‖-‖-elim (λ _ → hC) λ b → g a b
-
-∃ : (A : Type) (B : A → Type) → Type
-∃ A B = ‖ Σ A B ‖
 
 -- we also need that equality on ℕ is a proposition
 
