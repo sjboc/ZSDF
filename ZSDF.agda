@@ -416,8 +416,7 @@ Function-to-ZSDF g k hg = Function-eq-eval-NormalForm-to-ZSDF g (reduction k) (�
 Function-to-ZSDF-const-eval : (g : ℕ → ℕ) (k : ZSDF) (hg : (n : ℕ) → (g n) ≡ (eval k n))
     → (h : ℕ → ℕ) → (k' : ZSDF) → (hh : (n : ℕ) → (h n) ≡ (eval k' n))
     → (hgh : (g Z) ≡ (h Z)) → (hgh' : (g (S S Z)) ≡ (h (S S Z)))
-    → (Function-eq-eval-NormalForm-to-ZSDF g (reduction k) (λ n → (hg n) · reduction-eval-eq k n) (reduction-isNormalForm k))
-    ≡ (Function-eq-eval-NormalForm-to-ZSDF h (reduction k') (λ n → (hh n) · reduction-eval-eq k' n) (reduction-isNormalForm k'))
+    → Function-to-ZSDF g k hg ≡ Function-to-ZSDF h k' hh
 Function-to-ZSDF-const-eval g k hg h k' hh hgh hgh' = Function-eq-eval-NormalForm-to-ZSDF-const-eval g h (reduction k) (reduction k') 
     (λ n → (hg n) · reduction-eval-eq k n) (reduction-isNormalForm k)
     (λ n → (hh n) · reduction-eval-eq k' n) (reduction-isNormalForm k') hgh hgh'
