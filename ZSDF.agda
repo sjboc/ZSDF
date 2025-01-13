@@ -449,17 +449,6 @@ record Σ (A : Type) (B : A → Type) : Type where
         pr2 : B pr1
 open Σ
 
-transp : {A : Type} (B : A → Type) {a b : A} (p : a ≡ b) → B a → B b
-transp _ refl a = a
-
-Σ-≡ : {A : Type} {B : A → Type} {a b : A} {a' : B a} {b' : B b} 
-    (p : a ≡ b) → (transp B p a') ≡ b' → (a , a') ≡ (b , b')
-Σ-≡ refl refl = refl
-
-Σ-prop-≡ : {A : Type} {B : A → Type} {a b : Σ A B} → ((a : A) → isProp (B a))  
-    → ((pr1 a) ≡ (pr1 b)) → (a ≡ b)
-Σ-prop-≡ hB refl = Σ-≡ refl (hB _ _ _)
-
 postulate ‖_‖ : (A : Type) → Type
 postulate ‖-‖-intro : {A : Type} → A → ‖ A ‖
 postulate ‖-‖-isProp : {A : Type} → isProp ‖ A ‖
@@ -467,6 +456,9 @@ postulate ‖-‖-elim : {A : Type} {B : ‖ A ‖ → Type} → ((a : ‖ A ‖
 
 ∃ : (A : Type) (B : A → Type) → Type
 ∃ A B = ‖ Σ A B ‖
+
+transp : {A : Type} (B : A → Type) {a b : A} (p : a ≡ b) → B a → B b
+transp _ refl a = a
 
 ‖-‖-elim-2 : {A B : Type} {C : ‖ A ‖ → ‖ B ‖ → Type} 
     → ({a : ‖ A ‖} → {b : ‖ B ‖} → isProp (C a b)) 
